@@ -10,6 +10,8 @@
         android:layout_height="match_parent" />
 
     <fragment
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
         android:name="com.example.kjh.tmapsample2.InfoFragment"
         android:id="@+id/info"
         android:layout_width="match_parent"

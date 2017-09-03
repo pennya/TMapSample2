@@ -1,5 +1,6 @@
 package com.example.kjh.tmapsample2.tmap.model;
 
+import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapView;
 
 /**
@@ -9,5 +10,7 @@ import com.skp.Tmap.TMapView;
 public interface ITMapModelCallback {
 
     void getMap(TMapView map);
+
+    void getTMapMarkerItem(TMapMarkerItem item);
 
 }
