@@ -8,23 +8,23 @@ import android.app.Activity;
 
 public class TMapModel {
 
-    private ITMapModelCallback callback;
+    private ITMapModelCallback mCallback;
 
-    private Activity activity;
+    private Activity mActivity;
 
     private TMapWrapper mTMapWrapper;
 
 
     public TMapModel(Activity activity, ITMapModelCallback callback) {
-        this.activity = activity;
-        this.callback = callback;
+        this.mActivity = activity;
+        this.mCallback = callback;
 
         mTMapWrapper = new TMapWrapper(activity);
     }
 
     public void initTMap() {
         mTMapWrapper.initTMapView();
-        callback.getMap(mTMapWrapper.getMapView());
+        mCallback.getMap(mTMapWrapper.getMapView());
     }
 
     public void findPoiBetweenTwoPoints(double startLongitude, double startLatitude,
