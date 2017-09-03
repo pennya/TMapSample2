@@ -21,9 +21,9 @@ import com.skp.Tmap.TMapView;
 
 public class TMapFragment extends Fragment implements ITMapPresenter.View {
 
-    private RelativeLayout relativeLayout;
+    private RelativeLayout mRelativeLayout;
 
-    private ITMapPresenter presenter;
+    private ITMapPresenter mPresenter;
 
     public TMapFragment() {
     }
@@ -42,11 +42,11 @@ public class TMapFragment extends Fragment implements ITMapPresenter.View {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_tmap, container, false);
-        relativeLayout = (RelativeLayout)rootView.findViewById(R.id.map_view);
+        mRelativeLayout = (RelativeLayout)rootView.findViewById(R.id.map_view);
 
-        presenter = new TMapPresenterImpl(getActivity(), this);
-        presenter.initMap();
-        presenter.findPoiBetweenTwoPoints(127.001703, 37.539407,
+        mPresenter = new TMapPresenterImpl(getActivity(), this);
+        mPresenter.initMap();
+        mPresenter.findPoiBetweenTwoPoints(127.001703, 37.539407,
                 126.994343, 37.534473, "편의점");
 
         return rootView;
@@ -59,8 +59,8 @@ public class TMapFragment extends Fragment implements ITMapPresenter.View {
 
     @Override
     public void setMap(TMapView map) {
-        relativeLayout.removeAllViews();
-        relativeLayout.addView(map);
+        mRelativeLayout.removeAllViews();
+        mRelativeLayout.addView(map);
     }
 
     @Override

@@ -12,22 +12,22 @@ import com.skp.Tmap.TMapView;
 
 public class TMapPresenterImpl implements ITMapPresenter, ITMapModelCallback {
 
-    private TMapPresenterImpl.View view;
+    private TMapPresenterImpl.View mView;
 
-    private TMapModel model;
+    private TMapModel mModel;
 
-    private Activity activity;
+    private Activity mActivity;
 
     public TMapPresenterImpl(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
+        this.mActivity = activity;
+        this.mView = view;
 
-        model = new TMapModel(activity, this);
+        mModel = new TMapModel(mActivity, this);
     }
 
     @Override
     public void initMap() {
-        model.initTMap();
+        mModel.initTMap();
     }
 
     @Override
@@ -35,15 +35,15 @@ public class TMapPresenterImpl implements ITMapPresenter, ITMapModelCallback {
                                         double endLongitude, double endLatitude,
                                         String categoryName) {
 
-        model.findPoiBetweenTwoPoints(startLongitude, startLatitude,
+        mModel.findPoiBetweenTwoPoints(startLongitude, startLatitude,
                 endLongitude, endLatitude, categoryName);
 
     }
 
     @Override
     public void getMap(TMapView map) {
-        view.setMap(map);
-        view.showToast("TMapInit SUCCESS");
+        mView.setMap(map);
+        mView.showToast("TMapInit SUCCESS");
     }
 
 

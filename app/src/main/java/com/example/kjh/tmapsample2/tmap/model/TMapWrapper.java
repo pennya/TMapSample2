@@ -22,35 +22,38 @@ import java.util.ArrayList;
 
 public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
 
-    private Activity activity;
-
-    private TMapView mTMapView;
-
+    private final int TMAP_RADIUS_DEFAULT = 300; // 300m
+    private final int MAX_SEARCH_COUNT = 100;
     private final int MARKER_IMAGE = R.drawable.ic_room_black_24dp;
+    private final String TMAP_API_KEY = "7d54b976-ee11-3f11-a5d8-0846567726ef";
+    private Activity mActivity;
+    private TMapView mTMapView;
 
     public TMapView getMapView() {
         return mTMapView;
     }
 
     public TMapWrapper(Activity activity) {
-        this.activity = activity;
+        this.mActivity = activity;
     }
 
+    /**
+     * findAroundNamePOI Callback listener
+     * @param arrayList
+     */
     @Override
     public void onFindAroundNamePOI(ArrayList<TMapPOIItem> arrayList) {
         addPoiItems(arrayList);
     }
 
-
     public void initTMapView() {
-        mTMapView = new TMapView(activity);
-        mTMapView.setSKPMapApiKey("7d54b976-ee11-3f11-a5d8-0846567726ef");
+        mTMapView = new TMapView(mActivity);
+        mTMapView.setSKPMapApiKey(TMAP_API_KEY);
         mTMapView.setZoomLevel(15);
         mTMapView.setMapType(TMapView.MAPTYPE_STANDARD);
         mTMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
         mTMapView.setTrackingMode(true);
     }
-
 
     public void findPoiBetweenTwoPoints(
         TMapPoint startPoint,
@@ -58,21 +61,11 @@ public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
         String categoryName) {
 
         TMapPoint centerPoint = getCenterPoint(startPoint, endPoint);
-        double distance = getDistanceBetweenTwoPoints(startPoint, endPoint);
-
-        //check
-        addCircle(centerPoint, distance);
-
-        distance /= 2;
-        int radius = (int)(distance / 300);
+        int radius = getRadiusBetweenTwoPoints(startPoint, endPoint);
 
         TMapData tmapData = new TMapData();
-        tmapData.findAroundNamePOI(centerPoint, categoryName, radius, 50, this);
-
-
-
+        tmapData.findAroundNamePOI(centerPoint, categoryName, radius, MAX_SEARCH_COUNT, this);
     }
-
 
     public void findPoiBetweenTwoPoints(
             double startLongitude,
@@ -87,17 +80,15 @@ public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
                 categoryName);
     }
 
-
     public void addPoiItems(ArrayList<TMapPOIItem> poiItems) {
         for(TMapPOIItem poiItem : poiItems) {
             addPoiItem(poiItem.getPOIName(), poiItem.getPOIPoint());
         }
     }
 
-
     private void addPoiItem(String title, TMapPoint point) {
 
-        Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), MARKER_IMAGE);
+        Bitmap bitmap = BitmapFactory.decodeResource(mActivity.getResources(), MARKER_IMAGE);
 
         TMapMarkerItem item = new TMapMarkerItem();
         item.setTMapPoint(point);
@@ -109,14 +100,16 @@ public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
         mTMapView.addMarkerItem(strId, item);
     }
 
-
     private void addPoiItem(String title, double Longitude, double Latitude) {
-
         TMapPoint point = new TMapPoint(Latitude, Longitude);
         addPoiItem(title, point);
-
     }
 
+    private int getRadiusBetweenTwoPoints(TMapPoint startPoint, TMapPoint endPoint) {
+        double distance = getDistanceBetweenTwoPoints(startPoint, endPoint);
+        distance /= 2;
+        return (int)(distance / TMAP_RADIUS_DEFAULT);
+    }
 
     private TMapPoint getCenterPoint(
             double startLongitude,
