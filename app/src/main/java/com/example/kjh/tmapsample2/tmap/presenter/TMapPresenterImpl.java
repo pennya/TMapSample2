@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.example.kjh.tmapsample2.tmap.model.ITMapModelCallback;
 import com.example.kjh.tmapsample2.tmap.model.TMapModel;
+import com.skp.Tmap.TMapMarkerItem;
 import com.skp.Tmap.TMapView;
 
 /**
@@ -13,9 +14,7 @@ import com.skp.Tmap.TMapView;
 public class TMapPresenterImpl implements ITMapPresenter, ITMapModelCallback {
 
     private TMapPresenterImpl.View mView;
-
     private TMapModel mModel;
-
     private Activity mActivity;
 
     public TMapPresenterImpl(Activity activity, View view) {
@@ -44,6 +43,14 @@ public class TMapPresenterImpl implements ITMapPresenter, ITMapModelCallback {
     public void getMap(TMapView map) {
         mView.setMap(map);
         mView.showToast("TMapInit SUCCESS");
+    }
+
+    @Override
+    public void getTMapMarkerItem(TMapMarkerItem item) {
+        StringBuilder info = new StringBuilder();
+        info.append(item.getID() + "\n");
+        info.append(item.getName() + "\n");
+        mView.showToast(info.toString());
     }
 
 

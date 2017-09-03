@@ -9,6 +9,8 @@ import com.example.kjh.tmapsample2.R;
 import com.skp.Tmap.TMapCircle;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapMarkerItem;
+import com.skp.Tmap.TMapMarkerItem2;
+import com.skp.Tmap.TMapMarkerItemLayer;
 import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapPolyLine;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
  * Created by KJH on 2017-09-03.
  */
 
-public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
+public class TMapWrapper{
 
     private final int TMAP_RADIUS_DEFAULT = 300; // 300m
     private final int MAX_SEARCH_COUNT = 100;
@@ -37,34 +39,35 @@ public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
         this.mActivity = activity;
     }
 
-    /**
-     * findAroundNamePOI Callback listener
-     * @param arrayList
-     */
-    @Override
-    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> arrayList) {
-        addPoiItems(arrayList);
-    }
-
-    public void initTMapView() {
+    public void initTMapView(TMapView.OnClickListenerCallback listener) {
         mTMapView = new TMapView(mActivity);
         mTMapView.setSKPMapApiKey(TMAP_API_KEY);
         mTMapView.setZoomLevel(15);
         mTMapView.setMapType(TMapView.MAPTYPE_STANDARD);
         mTMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
         mTMapView.setTrackingMode(true);
+        mTMapView.setOnClickListenerCallBack(listener);
     }
 
     public void findPoiBetweenTwoPoints(
         TMapPoint startPoint,
         TMapPoint endPoint,
-        String categoryName) {
+        String categoryName,
+        TMapData.FindAroundNamePOIListenerCallback listener) {
 
         TMapPoint centerPoint = getCenterPoint(startPoint, endPoint);
         int radius = getRadiusBetweenTwoPoints(startPoint, endPoint);
 
+        mTMapView.setCenterPoint(
+                centerPoint.getLongitude(),
+                centerPoint.getLatitude(),
+                true);
+
+        //check
+        addCircle(centerPoint, getDistanceBetweenTwoPoints(startPoint, endPoint));
+
         TMapData tmapData = new TMapData();
-        tmapData.findAroundNamePOI(centerPoint, categoryName, radius, MAX_SEARCH_COUNT, this);
+        tmapData.findAroundNamePOI(centerPoint, categoryName, radius, MAX_SEARCH_COUNT, listener);
     }
 
     public void findPoiBetweenTwoPoints(
@@ -72,37 +75,39 @@ public class TMapWrapper implements TMapData.FindAroundNamePOIListenerCallback{
             double startLatitude,
             double endLongitude,
             double endLatitude,
-            String categoryName) {
+            String categoryName,
+            TMapData.FindAroundNamePOIListenerCallback listener) {
 
         findPoiBetweenTwoPoints(
                 new TMapPoint(startLatitude, startLongitude),
                 new TMapPoint(endLatitude, endLongitude),
-                categoryName);
+                categoryName, listener);
     }
 
     public void addPoiItems(ArrayList<TMapPOIItem> poiItems) {
+
+        // TMapPOIItem add
+        //mTMapView.addTMapPOIItem(poiItems);
+
+        // TMapMarkerItem add
         for(TMapPOIItem poiItem : poiItems) {
-            addPoiItem(poiItem.getPOIName(), poiItem.getPOIPoint());
+            addPoiItem(poiItem);
         }
     }
 
-    private void addPoiItem(String title, TMapPoint point) {
+    private void addPoiItem(TMapPOIItem poiItem) {
 
         Bitmap bitmap = BitmapFactory.decodeResource(mActivity.getResources(), MARKER_IMAGE);
 
         TMapMarkerItem item = new TMapMarkerItem();
-        item.setTMapPoint(point);
-        item.setName(title);
+        item.setTMapPoint(poiItem.getPOIPoint());
+        item.setName(poiItem.getPOIName());
         item.setVisible(item.VISIBLE);
         item.setIcon(bitmap);
 
-        String strId = String.format("marker_%s_%d", title, System.currentTimeMillis());
+        String strId = String.format("marker_%s_%d",
+                                    poiItem.getPOIName(), System.currentTimeMillis());
         mTMapView.addMarkerItem(strId, item);
-    }
-
-    private void addPoiItem(String title, double Longitude, double Latitude) {
-        TMapPoint point = new TMapPoint(Latitude, Longitude);
-        addPoiItem(title, point);
     }
 
     private int getRadiusBetweenTwoPoints(TMapPoint startPoint, TMapPoint endPoint) {

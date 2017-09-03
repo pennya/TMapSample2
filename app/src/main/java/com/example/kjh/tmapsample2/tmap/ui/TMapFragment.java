@@ -22,7 +22,6 @@ import com.skp.Tmap.TMapView;
 public class TMapFragment extends Fragment implements ITMapPresenter.View {
 
     private RelativeLayout mRelativeLayout;
-
     private ITMapPresenter mPresenter;
 
     public TMapFragment() {
