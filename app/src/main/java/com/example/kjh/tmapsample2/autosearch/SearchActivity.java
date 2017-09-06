@@ -14,6 +14,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         AutoCompleteTextView getInput = (AutoCompleteTextView) findViewById(R.id.translate_word);
+        getInput.setThreshold(1);
         getInput.setAdapter(new  AutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
 
     }
