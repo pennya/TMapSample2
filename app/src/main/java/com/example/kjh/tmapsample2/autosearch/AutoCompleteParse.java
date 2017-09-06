@@ -12,6 +12,11 @@ import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +38,7 @@ public class AutoCompleteParse implements TMapData.FindTitlePOIListenerCallback
 
         mListData.clear();
 
-        TMapWrapper tMapWrapper = new TMapWrapper(mActivity);
+        /*TMapWrapper tMapWrapper = new TMapWrapper(mActivity);
         tMapWrapper.initTMapView(new TMapView.OnClickListenerCallback() {
             @Override
             public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
@@ -52,7 +57,27 @@ public class AutoCompleteParse implements TMapData.FindTitlePOIListenerCallback
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }*/
+
+        try{
+            URL acUrl = new URL("https://apis.skplanetx.com/tmap/pois?areaLMCode=&centerLon=&centerLat=&count=&page=&reqCoordType=&searchKeyword="
+                    + word + "&callback=&areaLLCode=&multiPoint=&searchtypCd=&radius=&searchType=&resCoordType=&version=1"
+            );
+            URLConnection acConn = acUrl.openConnection();
+            acConn.setRequestProperty("appKey", "7d54b976-ee11-3f11-a5d8-0846567726ef");
+            acConn.setRequestProperty("Accept", "application/json");
+            acConn.connect();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    acConn.getInputStream()));
+
+            String line = reader.readLine();
+            do {
+
+            } while (line != null);
+        }catch (IOException e){
+            e.printStackTrace();
         }
+
 
         return mListData;
     }
