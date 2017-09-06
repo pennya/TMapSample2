@@ -49,6 +49,15 @@ public class TMapWrapper{
         mTMapView.setOnClickListenerCallBack(listener);
     }
 
+    public void findTitlePoi(String title, int nSearchCount,
+                                  TMapData.FindTitlePOIListenerCallback listener){
+
+
+        TMapData tmapData = new TMapData();
+        tmapData.findTitlePOI(title, nSearchCount, listener);
+
+    }
+
     public void findPoiBetweenTwoPoints(
         TMapPoint startPoint,
         TMapPoint endPoint,
