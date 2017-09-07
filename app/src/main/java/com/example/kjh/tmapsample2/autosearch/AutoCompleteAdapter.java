@@ -17,6 +17,7 @@ import com.skp.Tmap.TMapPOIItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by KJH on 2017-09-06.
@@ -49,20 +50,20 @@ public class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteItem> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View v = convertView;
+        View view = convertView;
         final AutoCompleteItem i = mSuggestions.get(position);
         if (i != null) {
             AutoCompleteItem item = (AutoCompleteItem)i;
-            v = mLayoutInflater.inflate(R.layout.item, null);
-            final TextView txtView = (TextView)v.findViewById(R.id.search_title);
+            view = mLayoutInflater.inflate(R.layout.item, null);
+            final TextView txtView = (TextView)view.findViewById(R.id.search_title);
             if(txtView != null){
                 txtView.setText(item.getTitle());
             }
         }
-        return v;
+        return view;
     }
 
-    @NonNull
+    /*@NonNull
     @Override
     public Filter getFilter() {
         Filter filter = new Filter() {
@@ -72,7 +73,8 @@ public class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteItem> {
                 if(charSequence != null){
                     AutoCompleteParse acp = new AutoCompleteParse();
                     List<AutoCompleteItem> new_suggestions
-                            = acp.getAutoComplete(mActivity, charSequence.toString());
+                            = acp.getAutoComplete(charSequence.toString());
+
                     mSuggestions.clear();
                     for(int i = 0; i< new_suggestions.size(); i++) {
                         mSuggestions.add(new_suggestions.get(i));
@@ -81,7 +83,6 @@ public class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteItem> {
                     filterResults.values = mSuggestions;
                     filterResults.count = mSuggestions.size();
                 }
-
 
                 return filterResults;
             }
@@ -92,5 +93,17 @@ public class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteItem> {
             }
         };
         return filter;
+    }*/
+
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+        mSuggestions.clear();
+        if (charText.length() != 0) {
+            AutoCompleteParse acp = new AutoCompleteParse();
+            List<AutoCompleteItem> new_suggestions
+                    = acp.getAutoComplete(charText);
+            mSuggestions.addAll(new_suggestions);
+        }
+        notifyDataSetChanged();
     }
 }
