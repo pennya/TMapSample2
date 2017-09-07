@@ -6,11 +6,13 @@ package com.example.kjh.tmapsample2.autosearch;
 
 public class AutoCompleteItem {
     private String title;
+    private String address;
     private double latitude;
     private double longitude;
 
-    public AutoCompleteItem(String title, double latitude, double longitude) {
+    public AutoCompleteItem(String title, String address, double latitude, double longitude) {
         this.title = title;
+        this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -21,6 +23,14 @@ public class AutoCompleteItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public double getLatitude() {
