@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +23,16 @@ import java.util.concurrent.ExecutionException;
 
 public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapter.ViewHolder> {
 
-    private Activity mActivty;
+    private SearchActivityCallback mActivityCallback;
     private List<AutoCompleteItem> mSuggestions;
 
-    public AutoCompleteAdapter(Activity activity) {
-        mActivty = activity;
+    public AutoCompleteAdapter(SearchActivityCallback activityCallback) {
+        mActivityCallback = activityCallback;
         mSuggestions = new ArrayList<AutoCompleteItem>();
+    }
+
+    public void setList(List<AutoCompleteItem> list) {
+        mSuggestions = list;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -35,8 +41,8 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            title = (TextView)itemView.findViewById(R.id.search_title);
-            address = (TextView)itemView.findViewById(R.id.search_address);
+            title = (TextView)itemView.findViewById(R.id.search_title_text_view);
+            address = (TextView)itemView.findViewById(R.id.search_address_text_view);
         }
     }
 
@@ -45,7 +51,7 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
         mSuggestions.clear();
         if (charText.length() != 0) {
             try {
-                AutoCompleteParse acp = new AutoCompleteParse();
+                AutoCompleteParse acp = new AutoCompleteParse(this);
                 mSuggestions.addAll(acp.execute(charText).get());
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -53,13 +59,11 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
                 e.printStackTrace();
             }
         }
-        notifyDataSetChanged();
     }
 
     @Override
     public AutoCompleteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
@@ -71,12 +75,15 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mActivty, mSuggestions.get(ItemPosition).getLatitude() + "/" +
-                        mSuggestions.get(ItemPosition).getLongitude(), Toast.LENGTH_SHORT).show();
+                mActivityCallback.showToast( mSuggestions.get(ItemPosition).getLatitude() + "/" +
+                        mSuggestions.get(ItemPosition).getLongitude());
             }
         });
-        holder.title.setText(mSuggestions.get(position).getTitle());
-        holder.address.setText(mSuggestions.get(position).getAddress());
+
+        if(mSuggestions.size() != 0) {
+            holder.title.setText(mSuggestions.get(position).getTitle());
+            holder.address.setText(mSuggestions.get(position).getAddress());
+        }
     }
 
     @Override
