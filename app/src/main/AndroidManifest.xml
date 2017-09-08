@@ -15,9 +15,6 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".autosearch.SearchActivity">
-
-        </activity>
-        <activity android:name=".Search2Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

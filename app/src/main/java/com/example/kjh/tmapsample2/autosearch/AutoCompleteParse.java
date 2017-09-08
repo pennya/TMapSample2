@@ -3,6 +3,7 @@ package com.example.kjh.tmapsample2.autosearch;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.PointF;
+import android.os.AsyncTask;
 
 import com.example.kjh.tmapsample2.Define;
 import com.example.kjh.tmapsample2.autosearch.jsonscheme.Poi;
@@ -29,12 +30,17 @@ import java.util.List;
  * Created by KJH on 2017-09-06.
  */
 
-public class AutoCompleteParse
+public class AutoCompleteParse extends AsyncTask<String, Void, List<AutoCompleteItem>>
 {
     private List<AutoCompleteItem> mListData;
 
     public AutoCompleteParse() {
         mListData = new ArrayList<AutoCompleteItem>();
+    }
+
+    @Override
+    protected List<AutoCompleteItem> doInBackground(String... word) {
+        return getAutoComplete(word[0]);
     }
 
     public List<AutoCompleteItem> getAutoComplete(String word){
@@ -61,7 +67,11 @@ public class AutoCompleteParse
 
             List<Poi> poi =  searchPoiInfo.getSearchPoiInfo().getPois().getPoi();
             for(int i =0; i < poi.size(); i++){
+                String fullAddr = poi.get(i).getUpperAddrName() + " " + poi.get(i).getMiddleAddrName() +
+                        " " + poi.get(i).getLowerAddrName() + " " + poi.get(i).getDetailAddrName();
+
                 mListData.add(new AutoCompleteItem(poi.get(i).getName(),
+                        fullAddr,
                         Double.parseDouble(poi.get(i).getFrontLat()),
                         Double.parseDouble(poi.get(i).getFrontLon()))
                 );

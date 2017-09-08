@@ -1,109 +1,86 @@
 package com.example.kjh.tmapsample2.autosearch;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kjh.tmapsample2.R;
-import com.skp.Tmap.TMapPOIItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by KJH on 2017-09-06.
  */
 
-public class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteItem> {
+public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapter.ViewHolder> {
 
-    private Activity mActivity;
-    private LayoutInflater mLayoutInflater;
+    private Activity mActivty;
     private List<AutoCompleteItem> mSuggestions;
 
-    public AutoCompleteAdapter(@NonNull Activity activity, @LayoutRes int resource) {
-        super(activity, resource);
-        this.mActivity = activity;
-        mLayoutInflater = (LayoutInflater)mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public AutoCompleteAdapter(Activity activity) {
+        mActivty = activity;
         mSuggestions = new ArrayList<AutoCompleteItem>();
     }
 
-    @Override
-    public int getCount() {
-        return mSuggestions.size();
-    }
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView title;
+        public TextView address;
 
-    @Nullable
-    @Override
-    public AutoCompleteItem getItem(int position) {
-        return mSuggestions.get(position);
-    }
-
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
-        final AutoCompleteItem i = mSuggestions.get(position);
-        if (i != null) {
-            AutoCompleteItem item = (AutoCompleteItem)i;
-            view = mLayoutInflater.inflate(R.layout.item, null);
-            final TextView txtView = (TextView)view.findViewById(R.id.search_title);
-            if(txtView != null){
-                txtView.setText(item.getTitle());
-            }
+        public ViewHolder(View itemView) {
+            super(itemView);
+            title = (TextView)itemView.findViewById(R.id.search_title);
+            address = (TextView)itemView.findViewById(R.id.search_address);
         }
-        return view;
     }
-
-    /*@NonNull
-    @Override
-    public Filter getFilter() {
-        Filter filter = new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                FilterResults filterResults = new FilterResults();
-                if(charSequence != null){
-                    AutoCompleteParse acp = new AutoCompleteParse();
-                    List<AutoCompleteItem> new_suggestions
-                            = acp.getAutoComplete(charSequence.toString());
-
-                    mSuggestions.clear();
-                    for(int i = 0; i< new_suggestions.size(); i++) {
-                        mSuggestions.add(new_suggestions.get(i));
-                    }
-
-                    filterResults.values = mSuggestions;
-                    filterResults.count = mSuggestions.size();
-                }
-
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                notifyDataSetChanged();
-            }
-        };
-        return filter;
-    }*/
 
     public void filter(String charText) {
         charText = charText.toLowerCase(Locale.getDefault());
         mSuggestions.clear();
         if (charText.length() != 0) {
-            AutoCompleteParse acp = new AutoCompleteParse();
-            List<AutoCompleteItem> new_suggestions
-                    = acp.getAutoComplete(charText);
-            mSuggestions.addAll(new_suggestions);
+            try {
+                AutoCompleteParse acp = new AutoCompleteParse();
+                mSuggestions.addAll(acp.execute(charText).get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
         notifyDataSetChanged();
+    }
+
+    @Override
+    public AutoCompleteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item, parent, false);
+
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(AutoCompleteAdapter.ViewHolder holder, int position) {
+        final int ItemPosition = position;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mActivty, mSuggestions.get(ItemPosition).getLatitude() + "/" +
+                        mSuggestions.get(ItemPosition).getLongitude(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        holder.title.setText(mSuggestions.get(position).getTitle());
+        holder.address.setText(mSuggestions.get(position).getAddress());
+    }
+
+    @Override
+    public int getItemCount() {
+        return mSuggestions.size();
     }
 }

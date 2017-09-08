@@ -1,4 +1,4 @@
-package com.example.kjh.tmapsample2.autosearch2;
+package com.example.kjh.tmapsample2.autosearch;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -11,9 +11,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.kjh.tmapsample2.R;
-import com.example.kjh.tmapsample2.autosearch.AutoCompleteAdapter;
-
 /**
  * Created by KIM on 2017-09-07.
  */
@@ -24,15 +21,10 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
     private Drawable clearDrawable;
     private OnFocusChangeListener onFocusChangeListener;
     private OnTouchListener onTouchListener;
-    private IconClickListener iconClickListener;
     private AutoCompleteAdapter dataAdapter;
 
     public void setListViewAdpater(AutoCompleteAdapter dataAdapter) {
         this.dataAdapter = dataAdapter;
-    }
-
-    public interface IconClickListener {
-        public void onClick();
     }
 
     public ClearEditText(Context context) {
@@ -50,10 +42,6 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
         init();
     }
 
-    public void setIconClickListener(IconClickListener iconClickListener) {
-        this.iconClickListener = iconClickListener;
-    }
-
 
     private void init() {
         Drawable tempDrawable = ContextCompat.getDrawable(getContext(), android.R.drawable.ic_notification_clear_all);
@@ -67,21 +55,21 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
         logoDrawable.setBounds(0, 0, logoDrawable.getIntrinsicWidth(), logoDrawable.getIntrinsicHeight());
         
         setClearIconVisible(false);
-        setSearchIconVisible(true);
+        setSearchIconVisible();
 
         super.setOnTouchListener(this);
         super.setOnFocusChangeListener(this);
         addTextChangedListener(this);
     }
 
-    private void setSearchIconVisible(boolean visible) {
-        logoDrawable.setVisible(visible, false);
-        setCompoundDrawables(visible ? logoDrawable : null, null, null, null);
+    private void setSearchIconVisible() {
+        logoDrawable.setVisible(true, false);
+        setCompoundDrawables(logoDrawable, null, null, null);
     }
 
     private void setClearIconVisible(boolean visible) {
         clearDrawable.setVisible(visible, false);
-        setCompoundDrawables(null, null, visible ? clearDrawable : null, null);
+        setCompoundDrawables(logoDrawable , null, visible ? clearDrawable : null, null);
     }
 
     @Override
@@ -103,7 +91,8 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (isFocused()) {
             setClearIconVisible(s.length() > 0);
-            dataAdapter.filter(s.toString());
+            final String word = s.toString();
+            dataAdapter.filter(word.toString());
         }
     }
 
@@ -117,7 +106,6 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
         if (hasFocus) {
             setClearIconVisible(getText().length() > 0);
         } else {
-            setSearchIconVisible(true);
             setClearIconVisible(false);
         }
 
