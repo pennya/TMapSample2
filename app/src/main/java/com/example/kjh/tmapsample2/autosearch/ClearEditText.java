@@ -2,6 +2,8 @@ package com.example.kjh.tmapsample2.autosearch;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatEditText;
@@ -22,6 +24,9 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
     private OnFocusChangeListener onFocusChangeListener;
     private OnTouchListener onTouchListener;
     private AutoCompleteAdapter dataAdapter;
+    private Handler handler = new Handler(Looper.getMainLooper() /*UI thread*/);
+    private Runnable workRunnable;
+    private final long DELAY = 500; // milliseconds
 
     public void setListViewAdpater(AutoCompleteAdapter dataAdapter) {
         this.dataAdapter = dataAdapter;
@@ -84,21 +89,27 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        // not use
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (isFocused()) {
             setClearIconVisible(s.length() > 0);
-            final String word = s.toString();
-            dataAdapter.filter(word.toString());
         }
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-
+        final String keyword = s.toString();
+        handler.removeCallbacks(workRunnable);
+        workRunnable = new Runnable() {
+            @Override
+            public void run() {
+                dataAdapter.filter(keyword);
+            }
+        };
+        handler.postDelayed(workRunnable, DELAY);
     }
 
     @Override

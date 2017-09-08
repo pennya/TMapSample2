@@ -33,8 +33,10 @@ import java.util.List;
 public class AutoCompleteParse extends AsyncTask<String, Void, List<AutoCompleteItem>>
 {
     private List<AutoCompleteItem> mListData;
+    private AutoCompleteAdapter mAdapter;
 
-    public AutoCompleteParse() {
+    public AutoCompleteParse(AutoCompleteAdapter adapter) {
+        this.mAdapter = adapter;
         mListData = new ArrayList<AutoCompleteItem>();
     }
 
@@ -43,11 +45,17 @@ public class AutoCompleteParse extends AsyncTask<String, Void, List<AutoComplete
         return getAutoComplete(word[0]);
     }
 
+    @Override
+    protected void onPostExecute(List<AutoCompleteItem> autoCompleteItems) {
+        mAdapter.setList(autoCompleteItems);
+        mAdapter.notifyDataSetChanged();
+    }
+
     public List<AutoCompleteItem> getAutoComplete(String word){
 
         try{
-            URL acUrl = new URL("https://apis.skplanetx.com/tmap/pois?areaLMCode=&centerLon=&centerLat=&count=&page=&reqCoordType=&searchKeyword="
-                    + word + "&callback=&areaLLCode=&multiPoint=&searchtypCd=&radius=&searchType=&resCoordType=&version=1"
+            URL acUrl = new URL("https://apis.skplanetx.com/tmap/pois?areaLMCode=&centerLon=&centerLat=&count=50&page=&reqCoordType=&searchKeyword="
+                    + word + "&callback=&areaLLCode=&multiPoint=&searchtypCd=&radius=&searchType=&resCoordType=WGS84GEO&version=1"
             );
 
             URLConnection acConn = acUrl.openConnection();
