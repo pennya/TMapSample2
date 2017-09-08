@@ -41,8 +41,8 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            title = (TextView)itemView.findViewById(R.id.search_title);
-            address = (TextView)itemView.findViewById(R.id.search_address);
+            title = (TextView)itemView.findViewById(R.id.search_title_text_view);
+            address = (TextView)itemView.findViewById(R.id.search_address_text_view);
         }
     }
 

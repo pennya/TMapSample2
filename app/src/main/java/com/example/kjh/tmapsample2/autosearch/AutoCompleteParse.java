@@ -1,22 +1,11 @@
 package com.example.kjh.tmapsample2.autosearch;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.PointF;
 import android.os.AsyncTask;
 
 import com.example.kjh.tmapsample2.Define;
 import com.example.kjh.tmapsample2.autosearch.jsonscheme.Poi;
-import com.example.kjh.tmapsample2.autosearch.jsonscheme.SearchPoiInfo;
 import com.example.kjh.tmapsample2.autosearch.jsonscheme.TMapSearchInfo;
-import com.example.kjh.tmapsample2.tmap.model.TMapModel;
-import com.example.kjh.tmapsample2.tmap.model.TMapWrapper;
 import com.google.gson.Gson;
-import com.skp.Tmap.TMapData;
-import com.skp.Tmap.TMapMarkerItem;
-import com.skp.Tmap.TMapPOIItem;
-import com.skp.Tmap.TMapPoint;
-import com.skp.Tmap.TMapView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
